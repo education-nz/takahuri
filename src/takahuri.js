@@ -65,10 +65,14 @@ const getLanguageValue = (config, lang, element, attribute) => {
   return element.getAttribute(key);
 };
 
+const commaSeparatedAttributeArray = attributes => attributes.split(',');
+
 const updateAttribute = (config, lang) => (element) => {
-  const attribute = element.getAttribute(config.identifiers.flag);
-  const updatedValue = getLanguageValue(config, lang, element, attribute);
-  element.setAttribute(attribute, updatedValue);
+  const attributes = commaSeparatedAttributeArray(element.getAttribute(config.identifiers.flag));
+  attributes.forEach((attribute) => {
+    const updatedValue = getLanguageValue(config, lang, element, attribute);
+    element.setAttribute(attribute, updatedValue);
+  });
 };
 
 const updateAttributes = (config, lang) => {
@@ -114,7 +118,6 @@ const getUrlParam = (config, _window = window) => {
 
 const loadInitialState = (config) => {
   const urlValue = getUrlParam(config);
-  console.log(urlValue);
   const initialValue = urlValue || getFromLocalStorage(config) || config.defaultLang;
   if (initialValue === config.defaultLang || initialValue === null) {
     updateAttributes(config, config.langKey.a);
