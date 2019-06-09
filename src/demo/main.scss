@@ -1,0 +1,186 @@
+$color-black: #000;
+$color-bg: #222;
+$color-text: #EFEFEF;
+$color-primary: #C93C31;
+
+$border-standard: 0.05rem solid $color-text;
+$font-family: "Gotham SSm A", "Gotham SSm B", Helvetica, sans-serif;
+$transition-background: background 250ms ease-in;
+
+// Shortcut for hover, focus and active states
+@mixin hover-focus-active {
+  &:hover,
+  &:focus,
+  &:active {
+    @content;
+  }
+}
+
+html,
+body {
+  background: $color-bg;
+  height: 100%;
+  margin: 0;
+  overflow: hidden;
+  padding: 0;
+  position: relative;
+  width: 100vw;
+}
+
+body {
+  color: $color-text;
+  font-size: 20px;
+  font-family: $font-family;
+  font-weight: 300;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+
+  @supports (display: flex) and (flex-grow: 1) {
+    display: flex;
+    flex-direction: column;
+
+    main {
+      background: $color-bg;
+      flex-grow: 1;
+      margin-bottom: 1rem;
+    }
+  }
+}
+
+h1 {
+  color: var(--color-primary);
+  font-size: 20vw;
+  font-weight: 800;
+}
+
+.container {
+  margin: 0 auto;
+  max-width: 60rem;
+  padding: 1.5rem;
+  width: calc(100% - 3rem);
+}
+
+.demo {
+  display: flex;
+  flex-direction: column;
+  font-size: 1.5rem;
+  height: 100%;
+  width: 100%;
+
+  &__main {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    justify-content: center;
+    height: 100%;
+    text-align: center;
+    width: 100%;
+  }
+
+  &__footer {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+  }
+
+  &__link {
+    align-items: center;
+    cursor: pointer;
+    display: flex;
+    border-bottom: $border-standard;
+    border-bottom-color: transparent;
+    padding-bottom: 0.5rem;
+    text-decoration: none;
+    width: auto;
+
+    @include hover-focus-active {
+      border-bottom-color: $color-text;
+    }
+
+    &:visited{
+      color: $color-text;
+      text-decoration: none;
+    }
+  }
+}
+
+.lang {
+  &--en {
+    [data-lang-active="lang--mi"] & {
+      display: none;
+    }
+  }
+
+  &--mi {
+    [data-lang-active="lang--en"] & {
+      display: none;
+    }
+  }
+}
+
+.lang-toggle {
+  margin: 0.5rem 0;
+  position: fixed;
+  right: 0;
+  top: 6.5rem;
+  font-weight: 400;
+  z-index: 1;
+
+  @include hover-focus-active {
+    cursor: pointer;
+  }
+
+  .lang-toggle__label--en,
+  .lang-toggle__label--mi {
+    background: $color-primary;
+    color: $color-text;
+    display: block;
+    margin-bottom: 0.25rem;
+    padding: 0.5rem 0;
+    text-align: center;
+    transition: $transition-background;
+    width: 3rem;
+    font-weight: 400;
+    box-shadow: -0.125rem 0.125rem 0.125rem transparentize($color-black, 0.5);
+
+    @include hover-focus-active {
+      background: $color-primary;
+      color: $color-text;
+    }
+
+    span {
+      display: inline-block;
+      line-height: 1;
+      font-weight: 400;
+    }
+  }
+}
+
+[data-lang-active="lang--mi"] .lang-toggle__label--mi,
+[data-lang-active="lang--en"] .lang-toggle__label--en {
+  color: $color-text;
+  position: relative;
+  font-weight: 400;
+
+  @include hover-focus-active {
+    background: $color-primary;
+    color: $color-text;
+  }
+
+  span {
+    border-bottom: $border-standard;
+  }
+}
+
+.icon--github {
+  display: inline-block;
+  min-height: 2rem;
+  margin-left: 1rem;
+  min-width: 2rem;
+
+  svg {
+    width: 100%;
+    height: 100%;
+  }
+}
