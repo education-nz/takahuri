@@ -1,0 +1,25 @@
+{
+  "env": {
+    "browser": true,
+    "commonjs": true,
+    "es6": true,
+    "jest": true
+  },
+  "plugins": [
+    "jest",
+    "jasmine",
+    "import"
+  ],
+  "extends": [
+    "airbnb-base"
+  ],
+  "rules": {
+    "no-console": 0,
+    "comma-dangle": [
+      "error",
+      "only-multiline"
+    ],
+    "import/extensions": 0,
+    "import/no-unresolved": 0
+  }
+}

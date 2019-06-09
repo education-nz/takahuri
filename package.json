@@ -1,0 +1,70 @@
+{
+  "name": "takahuri",
+  "version": "1.0.0",
+  "description": "A utility for creating bilingual content toggling with JavaScript. Implemented in vanillaJS in a functional style.",
+  "main": "dist/index.js",
+  "repository": "git@github.com:education-nz/takahuri.git",
+  "license": "MIT",
+  "dependencies": {
+    "babel-polyfill": "^6.26.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.4.5",
+    "@babel/plugin-proposal-object-rest-spread": "^7.4.4",
+    "@babel/preset-env": "^7.4.5",
+    "babel-jest": "^24.8.0",
+    "babel-preset-env": "^1.7.0",
+    "cross-env": "^5.2.0",
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb": "^17.1.0",
+    "eslint-plugin-import": "^2.17.3",
+    "eslint-plugin-jasmine": "^2.10.1",
+    "eslint-plugin-jest": "^22.6.4",
+    "eslint-plugin-jsx-a11y": "^6.2.1",
+    "eslint-plugin-react": "^7.13.0",
+    "jest": "^24.8.0",
+    "jest-localstorage-mock": "^2.4.0",
+    "laravel-mix": "^4.0.16",
+    "mutation-observer": "^1.0.3",
+    "resolve-url-loader": "2.3.1",
+    "sass": "^1.21.0",
+    "sass-loader": "7.*",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "scripts": {
+    "build": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "yarn build --watch",
+    "package": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "lint": "eslint src/**/*.js test/**/*.js --ignore-pattern tests/coverage/**/*.*",
+    "test": "node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test jest",
+    "test:coverage": "yarn test --coverage",
+    "test:watch": "yarn test --watch --notify",
+    "deploy-demo": "git subtree push --prefix dist/demo origin gh-pages"
+  },
+  "jest": {
+    "coverageDirectory": "<rootDir>/tests/coverage",
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/test/test-utils.js",
+      "<rootDir>/test/jestSetup.js"
+    ],
+    "moduleDirectories": [
+      "./node_modules"
+    ],
+    "moduleFileExtensions": [
+      "js"
+    ],
+    "testEnvironment": "jsdom",
+    "testURL": "http://test/",
+    "transform": {
+      "^.+\\.js$": "babel-jest",
+      "^.+\\.test.js$": "babel-jest"
+    },
+    "verbose": true,
+    "setupFiles": [
+      "jest-localstorage-mock"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/test/jestSetup.js"
+    ]
+  }
+}
