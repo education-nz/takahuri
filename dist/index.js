@@ -94,8 +94,10 @@ const saveToLocalStorage = (config, value) => {
 
 const getFromLocalStorage = config => localStorage.getItem(config.storageKey);
 
+const getCurrentLanguage = config => () => getFromLocalStorage(config) || config.defaultLang;
+
 const getToggledValue = (config) => {
-  const currentValue = getFromLocalStorage(config) || config.defaultLang;
+  const currentValue = getCurrentLanguage(config)();
   return currentValue === config.langKey.a ? config.langKey.b : config.langKey.a;
 };
 
@@ -151,9 +153,15 @@ const loadInitialState = (config) => {
   saveToLocalStorage(config, config.langKey.b);
 };
 
-const registerGlobalToggleFunctions = (toggleFunction, setLanguageFunction, _window = window) => {
+const registerGlobalToggleFunctions = (
+  toggleFunction,
+  setLanguageFunction,
+  getCurrentLanguageFunction,
+  _window = window,
+) => {
   _window.toggleLanguage = toggleFunction; // eslint-disable-line no-param-reassign
   _window.setLanguage = setLanguageFunction; // eslint-disable-line no-param-reassign
+  _window.getLanguage = getCurrentLanguageFunction; // eslint-disable-line no-param-reassign
 };
 
 // Override and keys on the default config that are supplied in customConfig
@@ -173,9 +181,13 @@ const initLanguageToggle = (customConfig) => {
 
   loadInitialState(config);
   if (config.globalFunctions === true) {
-    registerGlobalToggleFunctions(toggleFunction, setLanguage(config));
+    registerGlobalToggleFunctions(toggleFunction, setLanguage(config), getCurrentLanguage(config));
   }
-  document.addEventListener('DOMContentLoaded', attachLanguageToggle(config, toggleFunction));
+
+  const handler = attachLanguageToggle(config, toggleFunction);
+  document.addEventListener('DOMContentLoaded', handler);
+
+  return handler;
 };
 
 export default initLanguageToggle;

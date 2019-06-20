@@ -11330,8 +11330,14 @@ var getFromLocalStorage = function getFromLocalStorage(config) {
   return localStorage.getItem(config.storageKey);
 };
 
+var getCurrentLanguage = function getCurrentLanguage(config) {
+  return function () {
+    return getFromLocalStorage(config) || config.defaultLang;
+  };
+};
+
 var getToggledValue = function getToggledValue(config) {
-  var currentValue = getFromLocalStorage(config) || config.defaultLang;
+  var currentValue = getCurrentLanguage(config)();
   return currentValue === config.langKey.a ? config.langKey.b : config.langKey.a;
 };
 
@@ -11399,12 +11405,14 @@ var loadInitialState = function loadInitialState(config) {
   saveToLocalStorage(config, config.langKey.b);
 };
 
-var registerGlobalToggleFunctions = function registerGlobalToggleFunctions(toggleFunction, setLanguageFunction) {
-  var _window = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : window;
+var registerGlobalToggleFunctions = function registerGlobalToggleFunctions(toggleFunction, setLanguageFunction, getCurrentLanguageFunction) {
+  var _window = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : window;
 
   _window.toggleLanguage = toggleFunction; // eslint-disable-line no-param-reassign
 
   _window.setLanguage = setLanguageFunction; // eslint-disable-line no-param-reassign
+
+  _window.getLanguage = getCurrentLanguageFunction; // eslint-disable-line no-param-reassign
 }; // Override and keys on the default config that are supplied in customConfig
 
 
@@ -11423,10 +11431,12 @@ var initLanguageToggle = function initLanguageToggle(customConfig) {
   loadInitialState(config);
 
   if (config.globalFunctions === true) {
-    registerGlobalToggleFunctions(toggleFunction, setLanguage(config));
+    registerGlobalToggleFunctions(toggleFunction, setLanguage(config), getCurrentLanguage(config));
   }
 
-  document.addEventListener('DOMContentLoaded', attachLanguageToggle(config, toggleFunction));
+  var handler = attachLanguageToggle(config, toggleFunction);
+  document.addEventListener('DOMContentLoaded', handler);
+  return handler;
 };
 
 /* harmony default export */ __webpack_exports__["default"] = (initLanguageToggle);
