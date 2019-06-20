@@ -1,6 +1,6 @@
 {
   "name": "takahuri",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A utility for creating bilingual content toggling with JavaScript. Implemented in vanillaJS in a functional style.",
   "main": "dist/index.js",
   "repository": "git@github.com:education-nz/takahuri.git",
@@ -36,6 +36,7 @@
     "package": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
     "lint": "eslint src/**/*.js test/**/*.js --ignore-pattern test/coverage/**/*.*",
     "test": "node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test jest",
+    "test:debug": "node --inspect node_modules/cross-env/dist/bin/cross-env.js NODE_ENV=test jest",
     "test:coverage": "yarn test --coverage",
     "test:watch": "yarn test --watch --notify",
     "deploy-demo": "git subtree push --prefix dist/demo origin gh-pages"

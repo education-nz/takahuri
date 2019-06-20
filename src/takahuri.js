@@ -25,6 +25,8 @@ export const DEFAULT_CONFIG = {
   defaultLang: 'en',
   urlFlag: 'l=mi',
   storageKey: 'takahuri-state',
+  globalFunctions: true,
+  emitEvent: true,
 };
 
 /**
@@ -58,10 +60,16 @@ export const attachKeyListeners = (config, element, action) => {
 
 const setTabIndex = target => target.setAttribute('tabindex', 0);
 
+const emitToggleEvent = (newLanguage, _document = document) => {
+  _document.dispatchEvent(new Event('ToggledLanguage', {
+    newLanguage,
+  }));
+};
+
 const getLanguageValue = (config, lang, element, attribute) => {
   const { langOptionsPrefix } = config.identifiers;
   const prefix = attribute.startsWith(langOptionsPrefix) ? '' : langOptionsPrefix;
-  const key = lang === config.langKey.a ? `${prefix}${attribute}-${config.langKey.a}` : `${prefix}${attribute}-${config.langKey.b}`;
+  const key = (lang === config.langKey.a ? `${prefix}${attribute}-${config.langKey.a}` : `${prefix}${attribute}-${config.langKey.b}`);
   return element.getAttribute(key);
 };
 
@@ -86,8 +94,10 @@ const saveToLocalStorage = (config, value) => {
 
 const getFromLocalStorage = config => localStorage.getItem(config.storageKey);
 
+const getCurrentLanguage = config => () => getFromLocalStorage(config) || config.defaultLang;
+
 const getToggledValue = (config) => {
-  const currentValue = getFromLocalStorage(config) || config.defaultLang;
+  const currentValue = getCurrentLanguage(config)();
   return currentValue === config.langKey.a ? config.langKey.b : config.langKey.a;
 };
 
@@ -97,17 +107,31 @@ const toggleLanguageInLocalStorage = (config) => {
   return toggledValue;
 };
 
-const toggleLanguage = config => (event) => {
-  event.stopPropagation();
-  const lang = toggleLanguageInLocalStorage(config);
-  updateAttributes(config, lang);
+const updateLanguage = (config, newLanguage) => {
+  updateAttributes(config, newLanguage);
+  if (config.emitEvent === true) {
+    emitToggleEvent(newLanguage);
+  }
 };
 
-const attachLanguageToggle = config => () => {
+const setLanguage = config => (newLanguage) => {
+  updateLanguage(config, newLanguage);
+  saveToLocalStorage(config, newLanguage);
+};
+
+const toggleLanguage = config => (event = null) => {
+  if (event) {
+    event.stopPropagation();
+  }
+  const lang = toggleLanguageInLocalStorage(config);
+  updateLanguage(config, lang);
+};
+
+const attachLanguageToggle = (config, toggleFunction) => () => {
   const button = getElementsWithQuery(config.identifiers.toggle)
     .pop();
-  attachListeners(config, button, toggleLanguage(config));
-  attachKeyListeners(config, button, toggleLanguage(config));
+  attachListeners(config, button, toggleFunction);
+  attachKeyListeners(config, button, toggleFunction);
   setTabIndex(button);
 };
 
@@ -129,6 +153,17 @@ const loadInitialState = (config) => {
   saveToLocalStorage(config, config.langKey.b);
 };
 
+const registerGlobalToggleFunctions = (
+  toggleFunction,
+  setLanguageFunction,
+  getCurrentLanguageFunction,
+  _window = window,
+) => {
+  _window.toggleLanguage = toggleFunction; // eslint-disable-line no-param-reassign
+  _window.setLanguage = setLanguageFunction; // eslint-disable-line no-param-reassign
+  _window.getLanguage = getCurrentLanguageFunction; // eslint-disable-line no-param-reassign
+};
+
 // Override and keys on the default config that are supplied in customConfig
 const mergeConfigs = customConfig => ({
   ...DEFAULT_CONFIG,
@@ -142,8 +177,17 @@ const mergeConfigs = customConfig => ({
 const initLanguageToggle = (customConfig) => {
   // attach toggle on load
   const config = mergeConfigs(customConfig);
+  const toggleFunction = toggleLanguage(config);
+
   loadInitialState(config);
-  document.addEventListener('DOMContentLoaded', attachLanguageToggle(config));
+  if (config.globalFunctions === true) {
+    registerGlobalToggleFunctions(toggleFunction, setLanguage(config), getCurrentLanguage(config));
+  }
+
+  const handler = attachLanguageToggle(config, toggleFunction);
+  document.addEventListener('DOMContentLoaded', handler);
+
+  return handler;
 };
 
 export default initLanguageToggle;

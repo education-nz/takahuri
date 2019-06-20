@@ -23,6 +23,11 @@ The lib does not come transpiled or with polyfills.
 To support older browsers e.g. IE11 you'll need to use babel and polyfills.
 See the demo for further detail `src/demo/main.js` (transpiled with babel via laravel mix).
 
+**NOTE:**
+To disable chromes auto translation feature add the following meta to `<head>`:  
+`<meta name="google" value="notranslate">`
+
+
 ## How does it work?
 - Mounting  
 Takahuri, binds the toggle events on `DOMContentLoaded`, The toggle must be rendered on screen at this time.
@@ -164,12 +169,32 @@ Pass in a object overriding any of the config structure below.
   defaultLang: Default option of above languages (DEFAULT: 'en'),
   urlFlag: URL parameter flag (DEFAULT: 'l=mi'),
   storageKey: Local storage key (DEFAULT: 'takahuri-state'),
+  globalFunctions: Register 'toggleLanguage' and 'setLanguage(<key>)' as a global function on window (DEFAULT: true),
+  emitEvent: On toggle emit 'ToggledLanguage' event from document root (DEFAULT: true),
 }
 ```
 
-### A11y Support
-- Supports toggling by mouse and keyboard,
+### Set initial language via url flag
+If the url flag defined in config.urlFlag is passes is present as a url variable (`example.com?l=mi`) 
+the initial language code will be set as langkey.b as defined in config
+ 
+### A11y support
+- Supports toggling by mouse and keyboard
 - Adds tabindex to toggle to ensure it's focus-able
+- Allows aria tags to be toggled too, so aria-label etc can be toggled between languages
+
+**Note: Aria labels should still be manually defined on the toggle element, see examples in this read me.**
+
+### Programmatic interfaces
+- Global function
+     the following global functions can be use control the toggling programmatically:
+     - `window.toggleLanguage()`
+     - `window.getCurrentLanguage()` get the current language from localStorage
+     - `window.setLanguage(<KEY>)` where KEY is one of the values specified in config.langKey
+     _Registration of these functions can be disabled by custom config_
+- Custom Event
+    When a toggle occurs the custom event `ToggledLanguage` will be emitted from the document root.
+    _This functionality can be disabled by custom config_
 
 ## Development
 ### Scripts

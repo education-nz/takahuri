@@ -1,4 +1,4 @@
-/* global describe, expect, it, jest, beforeEach */
+/* global describe, expect, it, jest, beforeEach, beforeAll, window, document, localStorage */
 /* eslint-disable react/no-unknown-property */
 
 import {
@@ -23,6 +23,10 @@ describe('toggle', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     localStorage.getItem.mockImplementation(() => 'en');
+    // eslint-disable-next-line no-global-assign
+    window.toggleLanguage = null;
+    window.setLanguage = null;
+    window.getLanguage = null;
   });
 
   it('initialises the toggle', () => {
@@ -142,5 +146,112 @@ describe('toggle', () => {
       .toHaveBeenCalledTimes(1);
     expect(localStorage.setItem)
       .toHaveBeenLastCalledWith(DEFAULT_CONFIG.storageKey, 'mi');
+  });
+
+  it('Allows programmatic get language', () => {
+    initLanguageToggle();
+    jest.clearAllMocks();
+
+    expect(window.getLanguage)
+      .not
+      .toBeNull();
+    expect(localStorage.getItem)
+      .toHaveBeenCalledTimes(0);
+
+    const result = window.getLanguage();
+
+    expect(localStorage.getItem)
+      .toHaveBeenCalledTimes(1);
+    expect(result)
+      .toBe('en');
+  });
+
+  it('Allows programmatic toggling', () => {
+    initLanguageToggle();
+    jest.clearAllMocks();
+
+    expect(window.toggleLanguage)
+      .not
+      .toBeNull();
+    expect(localStorage.getItem)
+      .toHaveBeenCalledTimes(0);
+
+    window.toggleLanguage();
+
+    expect(localStorage.getItem)
+      .toHaveBeenCalledTimes(1);
+    expect(localStorage.setItem)
+      .toHaveBeenCalledTimes(1);
+    expect(localStorage.setItem)
+      .toHaveBeenLastCalledWith(DEFAULT_CONFIG.storageKey, 'mi');
+  });
+
+  it('Allows language to be explicitly set programmatically', () => {
+    initLanguageToggle();
+    jest.clearAllMocks();
+
+    expect(window.setLanguage)
+      .not
+      .toBeNull();
+    expect(localStorage.getItem)
+      .toHaveBeenCalledTimes(0);
+    expect(localStorage.setItem)
+      .toHaveBeenCalledTimes(0);
+
+    window.setLanguage('en');
+
+    expect(localStorage.getItem)
+      .toHaveBeenCalledTimes(0);
+    expect(localStorage.setItem)
+      .toHaveBeenCalledTimes(1);
+    expect(localStorage.setItem)
+      .toHaveBeenLastCalledWith(DEFAULT_CONFIG.storageKey, 'en');
+
+    window.setLanguage('mi');
+
+    expect(localStorage.getItem)
+      .toHaveBeenCalledTimes(0);
+    expect(localStorage.setItem)
+      .toHaveBeenCalledTimes(2);
+    expect(localStorage.setItem)
+      .toHaveBeenLastCalledWith(DEFAULT_CONFIG.storageKey, 'mi');
+  });
+
+  it('Does not define programmatic interfaces if disabled by config', () => {
+    initLanguageToggle({ globalFunctions: false });
+    expect(window.toggleLanguage)
+      .toBeNull();
+    expect(window.getLanguage)
+      .toBeNull();
+    expect(window.setLanguage)
+      .toBeNull();
+  });
+
+  it('Emits event on toggle', () => {
+    const toggle = getToggle();
+    const listenerSpy = jest.fn();
+    document.addEventListener('ToggledLanguage', listenerSpy);
+    mouseUp(toggle);
+
+    expect(localStorage.setItem)
+      .toHaveBeenLastCalledWith(DEFAULT_CONFIG.storageKey, 'mi');
+    expect(listenerSpy)
+      .toHaveBeenCalledTimes(1);
+
+    document.removeEventListener('ToggledLanguage', listenerSpy);
+  });
+
+  it('Does not emits event on toggle if disabled by config', () => {
+    initLanguageToggle({ emitEvent: false });
+    const listenerSpy = jest.fn();
+    document.addEventListener('ToggledLanguage', listenerSpy);
+
+    window.toggleLanguage();
+
+    expect(localStorage.setItem)
+      .toHaveBeenLastCalledWith(DEFAULT_CONFIG.storageKey, 'mi');
+    expect(listenerSpy)
+      .toHaveBeenCalledTimes(0);
+    document.removeEventListener('ToggledLanguage', listenerSpy);
   });
 });
