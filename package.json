@@ -41,7 +41,7 @@
     "deploy-demo": "git subtree push --prefix dist/demo origin gh-pages"
   },
   "jest": {
-    "coverageDirectory": "<rootDir>/tests/coverage",
+    "coverageDirectory": "<rootDir>/test/coverage",
     "coveragePathIgnorePatterns": [
       "<rootDir>/test/test-utils.js",
       "<rootDir>/test/jestSetup.js"
