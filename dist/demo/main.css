@@ -114,6 +114,10 @@ h1 {
   cursor: pointer;
 }
 
+.lang-toggle--secondary {
+  top: 16.5rem;
+}
+
 .lang-toggle .lang-toggle__label--en,
 .lang-toggle .lang-toggle__label--mi {
   background: #C93C31;

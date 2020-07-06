@@ -11206,14 +11206,13 @@ initialiseJSUtilities();
 /*!*************************!*\
   !*** ./src/takahuri.js ***!
   \*************************/
-/*! exports provided: KEYS, DEFAULT_CONFIG, getElementsWithQuery, getElementsWithAttribute, attachListeners, keyPressIsOneOf, getKeypressHandler, attachKeyListeners, default */
+/*! exports provided: KEYS, DEFAULT_CONFIG, getElementsWithAttribute, attachListeners, keyPressIsOneOf, getKeypressHandler, attachKeyListeners, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "KEYS", function() { return KEYS; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "DEFAULT_CONFIG", function() { return DEFAULT_CONFIG; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getElementsWithQuery", function() { return getElementsWithQuery; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "getElementsWithAttribute", function() { return getElementsWithAttribute; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "attachListeners", function() { return attachListeners; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "keyPressIsOneOf", function() { return keyPressIsOneOf; });
@@ -11238,7 +11237,7 @@ var DEFAULT_CONFIG = {
   },
   targetKeys: [KEYS.enter, KEYS.space],
   identifiers: {
-    toggle: '.lang-toggle',
+    toggle: 'lang-toggle',
     flag: 'data-toggles',
     langOptionsPrefix: 'data-'
   },
@@ -11256,9 +11255,6 @@ var DEFAULT_CONFIG = {
  * Private functions
  */
 
-var getElementsWithQuery = function getElementsWithQuery(query) {
-  return Array.from(document.querySelectorAll(query));
-};
 var getElementsWithAttribute = function getElementsWithAttribute(attribute) {
   return Array.from(document.querySelectorAll("[".concat(attribute, "]")));
 };
@@ -11282,10 +11278,6 @@ var getKeypressHandler = function getKeypressHandler(config, action) {
 };
 var attachKeyListeners = function attachKeyListeners(config, element, action) {
   attachListeners(config, element, getKeypressHandler(config, action), config.events.key);
-};
-
-var setTabIndex = function setTabIndex(target) {
-  return target.setAttribute('tabindex', 0);
 };
 
 var emitToggleEvent = function emitToggleEvent(newLanguage) {
@@ -11318,7 +11310,7 @@ var updateAttribute = function updateAttribute(config, lang) {
 };
 
 var updateAttributes = function updateAttributes(config, lang) {
-  var elements = getElementsWithQuery("[".concat(config.identifiers.flag, "]"));
+  var elements = getElementsWithAttribute("".concat(config.identifiers.flag));
   elements.forEach(updateAttribute(config, lang));
 };
 
@@ -11377,10 +11369,12 @@ var toggleLanguage = function toggleLanguage(config) {
 
 var attachLanguageToggle = function attachLanguageToggle(config, toggleFunction) {
   return function () {
-    var button = getElementsWithQuery(config.identifiers.toggle).pop();
-    attachListeners(config, button, toggleFunction);
-    attachKeyListeners(config, button, toggleFunction);
-    setTabIndex(button);
+    var buttons = document.getElementsByClassName(config.identifiers.toggle);
+    Array.prototype.forEach.call(buttons, function (element) {
+      attachListeners(config, element, toggleFunction);
+      attachKeyListeners(config, element, toggleFunction);
+      element.tabIndex = 0;
+    });
   };
 };
 
@@ -11450,8 +11444,8 @@ var initLanguageToggle = function initLanguageToggle(customConfig) {
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! /Users/jess/Workspace/takahuri/src/demo/main.js */"./src/demo/main.js");
-module.exports = __webpack_require__(/*! /Users/jess/Workspace/takahuri/src/demo/main.scss */"./src/demo/main.scss");
+__webpack_require__(/*! /Users/zaid/Sites/takahuri/src/demo/main.js */"./src/demo/main.js");
+module.exports = __webpack_require__(/*! /Users/zaid/Sites/takahuri/src/demo/main.scss */"./src/demo/main.scss");
 
 
 /***/ })

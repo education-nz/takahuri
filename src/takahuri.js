@@ -14,7 +14,7 @@ export const DEFAULT_CONFIG = {
   },
   targetKeys: [KEYS.enter, KEYS.space],
   identifiers: {
-    toggle: '.lang-toggle',
+    toggle: 'lang-toggle',
     flag: 'data-toggles',
     langOptionsPrefix: 'data-',
   },
@@ -32,8 +32,6 @@ export const DEFAULT_CONFIG = {
 /**
  * Private functions
  */
-export const getElementsWithQuery = query => Array.from(document.querySelectorAll(query));
-
 export const getElementsWithAttribute = attribute => Array.from(document.querySelectorAll(`[${attribute}]`));
 
 export const attachListeners = (config, element, action, events = null) => {
@@ -57,8 +55,6 @@ export const getKeypressHandler = (config, action) => (event) => {
 export const attachKeyListeners = (config, element, action) => {
   attachListeners(config, element, getKeypressHandler(config, action), config.events.key);
 };
-
-const setTabIndex = target => target.setAttribute('tabindex', 0);
 
 const emitToggleEvent = (newLanguage, _document = document) => {
   _document.dispatchEvent(new Event('ToggledLanguage', {
@@ -84,7 +80,8 @@ const updateAttribute = (config, lang) => (element) => {
 };
 
 const updateAttributes = (config, lang) => {
-  const elements = getElementsWithQuery(`[${config.identifiers.flag}]`);
+
+  const elements = getElementsWithAttribute(`${config.identifiers.flag}`);
   elements.forEach(updateAttribute(config, lang));
 };
 
@@ -128,11 +125,14 @@ const toggleLanguage = config => (event = null) => {
 };
 
 const attachLanguageToggle = (config, toggleFunction) => () => {
-  const button = getElementsWithQuery(config.identifiers.toggle)
-    .pop();
-  attachListeners(config, button, toggleFunction);
-  attachKeyListeners(config, button, toggleFunction);
-  setTabIndex(button);
+
+  const buttons = document.getElementsByClassName(config.identifiers.toggle);
+
+  Array.prototype.forEach.call(buttons, element => {
+    attachListeners(config, element, toggleFunction);
+    attachKeyListeners(config, element, toggleFunction);
+    element.tabIndex = 0;
+  });
 };
 
 const getUrlParam = (config, _window = window) => {

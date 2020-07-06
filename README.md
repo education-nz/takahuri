@@ -35,7 +35,7 @@ Elements with toggleable attributes can be added dynamically.
 
 - Define a toggle  
 Finds the toggle element specified by the class `lang-toggle`(unless overridden in config `identifiers.toggle`).
-Binds keyboard and mouse events.
+Binds keyboard and mouse events. You may add as many toggles as required, however you must use a consistent toggle identifier, as toggles are selected by class name.
 
 - Toggle attribute value  
 Each time the toggle is triggered a script runs to find all toggling attributes on the page and toggles their current values.
