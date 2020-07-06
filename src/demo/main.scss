@@ -131,6 +131,10 @@ h1 {
     cursor: pointer;
   }
 
+  &--secondary {
+    top: 16.5rem;
+  }
+
   .lang-toggle__label--en,
   .lang-toggle__label--mi {
     background: $color-primary;
